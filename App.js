@@ -15,27 +15,35 @@ import {
   Alert,
 } from 'react-native';
 import MainScreen from './Main';
+import ExpenseScreen from './Expense'; // Import the ExpenseScreen
 
-import rupeeIcon from './assets/RupeeIcon.png'; // Adjust the path based on your folder structure
-import dollarIcon from './assets/DollarIcon.png'; // Adjust the path based on your folder structure
-import euroIcon from './assets/EuroIcon.png'; // Adjust the path based on your folder structure
-import poundIcon from './assets/PoundIcon.png'; // Adjust the path based on your folder structure
-import logo from './assets/Logo.png'; // Adjust the path based on your folder structure
+import rupeeIcon from './assets/RupeeIcon.png';
+import dollarIcon from './assets/DollarIcon.png';
+import euroIcon from './assets/EuroIcon.png';
+import poundIcon from './assets/PoundIcon.png';
+import logo from './assets/Logo.png';
 
 const Stack = createNativeStackNavigator();
 
-const lightGreen = '#7ae582'
+const lightGreen = '#7ae582';
 const darkGreen = '#40916c';
 const black = '#040303';
 const white = '#ffffff';
 
 const HomeScreen = ({ navigation }) => {
   const [value, setValue] = useState('');
+  const [id, setId] = useState(''); // Define the state for id
   const [currencyIcon, setCurrencyIcon] = useState(rupeeIcon); // Default currency icon
 
   const handleInputChange = (input) => {
     if (/^\d*$/.test(input)) {
       setValue(input);
+    }
+  };
+
+  const handleIdChange = (input) => {
+    if (/^\d*$/.test(input)) {
+      setId(input);
     }
   };
 
@@ -81,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
         </Text>
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={selectCurrency}>
-            <Image source={currencyIcon} style={[styles.currencyIcon, { tintColor:  white }]} />
+            <Image source={currencyIcon} style={[styles.currencyIcon, { tintColor: white }]} />
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -91,13 +99,25 @@ const HomeScreen = ({ navigation }) => {
             placeholder="Type a number"
           />
         </View>
+        <TextInput
+          style={styles.idInput} // Use the new style for ID input
+          value={id}
+          onChangeText={handleIdChange}
+          keyboardType="numeric"
+          placeholder="Enter your ID"
+        />
         <View style={styles.buttonContainer}>
-          <Button
-            title="Begin your Journey"
-            onPress={() => navigation.navigate('Main', {cashAmount: value})}
-            color= "white"
-          />
-        </View>
+            <Button
+              title="Begin your Journey"
+              onPress={() => {
+                  console.log('Cash Amount:', value);
+                  console.log('User ID:', id);
+                  navigation.navigate('Main', { cashAmount: value, userId: id });
+              }}
+    color="white"
+  />
+</View>
+
       </View>
     </TouchableWithoutFeedback>
   );
@@ -120,6 +140,13 @@ export default function App() {
           options={{
             gestureEnabled: false,
             headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Expense" // Added this line to include the ExpenseScreen
+          component={ExpenseScreen}
+          options={{
+            headerShown: false, // Hide header if you want it to match other screens
           }}
         />
       </Stack.Navigator>
@@ -163,13 +190,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '80%',
-    marginBottom: 50,
+    marginBottom: 20, // Adjusted spacing
   },
   currencyIcon: {
     width: 30,
     height: 30,
     marginRight: 10,
-    marginLeft:-20,
+    marginLeft: -20,
   },
   input: {
     flex: 1,
@@ -179,11 +206,24 @@ const styles = StyleSheet.create({
     padding: 8,
     fontSize: 18,
     borderRadius: 4,
-    color: white ,
+    color: white,
     fontFamily: 'Helvetica',
   },
+  idInput: {
+    width: '80%',
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    padding: 8,
+    fontSize: 18,
+    borderRadius: 4,
+    color: white,
+    fontFamily: 'Helvetica',
+    marginTop: 20,
+    marginBottom: 50,
+  },
   buttonContainer: {
-    marginTop: 50,
+    marginTop: 20,
     width: '50%',
     height: 60,
     justifyContent: 'center',
